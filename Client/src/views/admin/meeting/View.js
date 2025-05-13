@@ -37,18 +37,16 @@ const View = () => {
         if (response?.data) {
             const data = {
                 ...response.data,
-                attendes: contactData?.data?.filter(
-                    ({_id}) => response.data.attendes.includes(_id)),
-                attendesLead: leadData?.data?.filter(
-                    ({_id}) => response.data.attendesLead.includes(_id))
+                attendes: contactData.data?.filter(
+                    ({_id}) => response.data.attendes?.includes(_id)),
+                attendesLead: leadData.data?.filter(
+                    ({_id}) => response.data.attendesLead?.includes(_id))
             }
 
             setData(data);
         }
 
-        setIsLoding(false)
-
-        console.log('data >> ', response?.data, store.getState())
+        setIsLoding(false);
     }
 
     useEffect(() => {
