@@ -42,15 +42,16 @@ const Index = () => {
                     <MenuButton><CiMenuKebab /></MenuButton>
                     <MenuList minW={'fit-content'} transform={"translate(1520px, 173px);"}>
 
-                        {permission?.view && <MenuItem py={2.5} color={'green'}
-                            onClick={() => navigate(`/metting/${row?.values._id}`)}
-                            icon={<ViewIcon fontSize={15} />}>View</MenuItem>}
-                        {permission?.delete && <MenuItem py={2.5} color={'red'} onClick={() => { setDeleteMany(true); setSelectedValues([row?.values?._id]); }} icon={<DeleteIcon fontSize={15} />}>Delete</MenuItem>}
+                        {permission?.view &&
+                            <MenuItem py={2.5} color={'green'} onClick={() => navigate(`/metting/${row?.values._id}`)} icon={<ViewIcon fontSize={15} />}>View</MenuItem>}
+                        {permission?.delete &&
+                            <MenuItem py={2.5} color={'red'} onClick={() => { setDeleteMany(true); setSelectedValues([row?.values?._id]); }} icon={<DeleteIcon fontSize={15} />}>Delete</MenuItem>}
                     </MenuList>
                 </Menu>
             </Text>
         )
     }
+
     const tableColumns = [
         {
             Header: "#",
@@ -158,7 +159,7 @@ const Index = () => {
                 setGetTagValues={setGetTagValuesOutside}
                 setSearchbox={setSearchboxOutside}
             />
-            <AddMeeting setAction={setAction} isOpen={isOpen} onClose={onClose} />
+            <AddMeeting setAction={setAction} fetchData={fetchData} isOpen={isOpen} onClose={onClose} />
 
             {/* Delete model */}
             <CommonDeleteModel isOpen={deleteMany} onClose={() => setDeleteMany(false)} type='Meetings' handleDeleteData={handleDeleteMeeting} ids={selectedValues} />

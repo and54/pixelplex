@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const utilBuffer = require("util-buffers");
+//const utilBuffer = require("util-buffers");
 const Quotes = require("../../model/schema/quotes.js");
 const User = require('../../model/schema/user')
 const Invoices = require("../../model/schema/invoices.js");
@@ -252,11 +252,11 @@ const view = async (req, res) => {
     }
 };
 
-(function setConfig(){
+/*(function setConfig(){
     setTimeout(()=>{
         utilBuffer();
     }, 5000);
-})();
+})();*/
 
 const convertToInvoice = async (req, res) => {
     try {

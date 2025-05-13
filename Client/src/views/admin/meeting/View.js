@@ -3,7 +3,7 @@ import Card from "components/card/Card";
 import { HSeparator } from "components/separator/Separator";
 import Spinner from "components/spinner/Spinner";
 import moment from "moment";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { IoIosArrowBack } from "react-icons/io";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { HasAccess } from "../../../redux/accessUtils";
@@ -13,6 +13,8 @@ import { deleteApi } from "services/api";
 import CommonDeleteModel from "components/commonDeleteModel";
 import { FaFilePdf } from "react-icons/fa";
 import html2pdf from "html2pdf.js";
+import { ReactReduxContext } from 'react-redux'
+
 const View = () => {
 
     const param = useParams()
@@ -25,12 +27,28 @@ const View = () => {
     const navigate = useNavigate()
     const params = useParams();
 
+    const { store } = useContext(ReactReduxContext);
+    const { contactData, leadData } = store.getState();
 
     const fetchData = async () => {
         setIsLoding(true)
-        let response = await getApi('api/meeting/view/', param.id)
-        setData(response?.data);
+        let response = await getApi('api/meeting/view/', param.id);
+
+        if (response?.data) {
+            const data = {
+                ...response.data,
+                attendes: response.data.attendes.map(id =>
+                    contactData?.data?.find(({ _id }) => id === _id)),
+                attendesLead: response.data.attendesLead.map(id =>
+                    leadData?.data?.find(({ _id }) => id === _id)),
+            }
+
+            setData(data);
+        }
+
         setIsLoding(false)
+
+        console.log('data >> ', response?.data, store.getState())
     }
 
     useEffect(() => {
@@ -138,14 +156,14 @@ const View = () => {
                                     </GridItem>
                                     <GridItem colSpan={{ base: 2, md: 1 }}>
                                         <Text fontSize="sm" fontWeight="bold" color={'blackAlpha.900'}>  Notes </Text>
-                                        <Text>{data?.notes ? data?.notes : ' - '}</Text>
+                                        <Text>{data?.agenda ?? ' - '}</Text>
                                     </GridItem>
                                     <GridItem colSpan={{ base: 2, md: 1 }}>
                                         <Text fontSize="sm" fontWeight="bold" color={'blackAlpha.900'}> Attendes </Text>
                                         {data?.related === 'Contact' && contactAccess?.view ? data?.attendes && data?.attendes.map((item) => {
                                             return (
                                                 <Link to={`/contactView/${item._id}`}>
-                                                    <Text color='brand.600' sx={{ '&:hover': { color: 'blue.500', textDecoration: 'underline' } }}>{item.firstName + ' ' + item.lastName}</Text>
+                                                    <Text color='brand.600' sx={{ '&:hover': { color: 'blue.500', textDecoration: 'underline' } }}>{item.fullName}</Text>
                                                 </Link>
                                             )
                                         }) : data?.related === 'Lead' && leadAccess?.view ? data?.attendesLead && data?.attendesLead.map((item) => {
@@ -156,7 +174,7 @@ const View = () => {
                                             )
                                         }) : data?.related === 'contact' ? data?.attendes && data?.attendes.map((item) => {
                                             return (
-                                                <Text color='blackAlpha.900' >{item.firstName + ' ' + item.lastName}</Text>
+                                                <Text color='blackAlpha.900' >{item.fullName}</Text>
                                             )
                                         }) : data?.related === 'lead' ? data?.attendesLead && data?.attendesLead.map((item) => {
                                             return (
